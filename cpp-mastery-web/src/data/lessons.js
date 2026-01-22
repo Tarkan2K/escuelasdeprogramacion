@@ -91,36 +91,57 @@ El compilador toma la Unidad de Traducción generada por el preprocesador y la t
 
 El resultado es un archivo objeto que contiene código máquina pero con "huecos" en las direcciones de memoria de funciones externas.
 
-## Etapa 3: Enlazado (Linking)
-El enlazador (Linker) toma uno o más archivos objeto y las librerías necesarias (estáticas \`.a\`/\`.lib\` o dinámicas \`.so\`/\`.dll\`) y los combina en un único archivo ejecutable.
+        title: "0.2: El Modelo de Compilación",
+        phase: "Módulo 0: Introducción",
+        description: "Entendiendo cómo el código fuente se transforma en un binario ejecutable: Preprocesamiento, Compilación y Enlazado.",
+        content: `
+# El Modelo de Compilación de C++
 
-*   **Resolución de Símbolos**: El linker conecta las llamadas a funciones en un archivo objeto con sus definiciones en otro archivo objeto o librería.
-*   **Relocación**: Asigna direcciones de memoria finales a las instrucciones y datos.
+C++ es único en su modelo de compilación, heredado de C.A diferencia de lenguajes modernos como Java o C# que compilan a bytecode, o Python que es interpretado, C++ compila directamente a código máquina nativo.Este proceso es secuencial y consta de cuatro etapas distintas.
 
-> **Error Común**: Un error "Undefined Reference" significa que el compilador aprobó la sintaxis (Etapa 2), pero el Linker (Etapa 3) no pudo encontrar la definición de una función.
+## 1. Preprocesamiento
+El preprocesador es una herramienta de "copiar y pegar" inteligente que se ejecuta antes que el compilador.
+*   ** Directivas **: Procesa todo lo que empieza con \`#\` (\`#include\`, \`#define\`, \`#ifdef\`).
+*   **Inclusión**: Cuando haces \`#include <vector>\`, el preprocesador busca ese archivo y copia *todo* su contenido en tu archivo actual.
+*   **Resultado**: Genera una **Unidad de Traducción**. Este es tu código fuente con todos los headers expandidos y sin comentarios.
 
-# 2. Name Mangling (Decoración de Nombres)
+## 2. Compilación
+El compilador toma la Unidad de Traducción y la analiza.
+*   **Análisis Sintáctico**: Verifica que el código cumpla con las reglas del lenguaje (puntos y comas, tipos de datos).
+*   **Optimización**: El compilador intenta mejorar tu código (inlining, loop unrolling).
+*   **Generación de Código**: Traduce el C++ a lenguaje ensamblador (Assembly) específico para tu CPU.
 
-Dado que C++ soporta sobrecarga de funciones (mismo nombre, distintos parámetros), el compilador debe generar nombres únicos para cada función en el código objeto. Este proceso se llama "Name Mangling".
+## 3. Ensamblado
+El ensamblador convierte el código ensamblador en código máquina (binario).
+*   **Resultado**: Un **Archivo Objeto** (\`.o\` en Linux, \`.obj\` en Windows).
+*   Este archivo contiene instrucciones de máquina, pero no es ejecutable aún porque le faltan direcciones de memoria de funciones externas (como \`std::cout\`).
 
-Por ejemplo, \`void foo(int)\` podría convertirse en \`_Z3fooi\`. Esto es específico de cada compilador (ABI), razón por la cual no se pueden mezclar fácilmente objetos compilados con versiones incompatibles de compiladores.
-    `,
-        quiz: {
-            question: "Si obtienes un error 'Undefined reference to function X', ¿en qué etapa falló el proceso?",
-            options: ["Preprocesamiento", "Compilación", "Enlazado (Linking)", "Ejecución"],
-            correctAnswer: 2
-        }
+## 4. Enlazado (Linking)
+El enlazador (Linker) es el paso final.
+*   **Combinación**: Toma todos los archivos objeto (\`main.o\`, \`player.o\`) y las librerías estáticas.
+*   **Resolución de Símbolos**: Si \`main.cpp\` llama a una función \`void Log()\` definida en \`utils.cpp\`, el enlazador conecta esa llamada con la definición real.
+*   **Errores Comunes**:
+    *   *Undefined reference*: Declaraste una función pero no la definiste (o no enlazaste el archivo objeto).
+    *   *Multiple definition*: Definiste la misma función en dos lugares (violación de la One Definition Rule).
+
+> **Concepto Clave**: Cada archivo \`.cpp\` se compila por separado en su propio archivo objeto. El enlazador es el único que "ve" todo el proyecto junto.
+        `,
+    quiz: {
+        question: "Si obtienes un error 'Undefined reference to function X', ¿en qué etapa falló el proceso?",
+        options: ["Preprocesamiento", "Compilación", "Enlazado (Linking)", "Ejecución"],
+        correctAnswer: 2
+    }
     },
 
-    // ===========================================================================
-    // MÓDULO 1: FUNDAMENTOS DEL LENGUAJE
-    // ===========================================================================
-    {
-        id: 3,
+// ===========================================================================
+// MÓDULO 1: FUNDAMENTOS DEL LENGUAJE
+// ===========================================================================
+{
+    id: 3,
         title: "1.1: Estructura de un Programa y la Función Main",
-        phase: "Módulo 1: Fundamentos",
-        description: "Análisis de la función de entrada, códigos de retorno y el entorno de ejecución.",
-        content: `
+            phase: "Módulo 1: Fundamentos",
+                description: "Análisis de la función de entrada, códigos de retorno y el entorno de ejecución.",
+                    content: `
 # 1. La Función Main
 
 Todo programa en C++ debe tener exactamente una función global llamada \`main\`. Es el punto de entrada designado donde el sistema operativo transfiere el control al programa.
@@ -159,24 +180,24 @@ En el desarrollo profesional, es crucial no ignorar errores. El atributo \`[[nod
 
 Si llamas a \`conectarBaseDeDatos();\` sin capturar su resultado, el compilador generará una advertencia, ayudando a prevenir bugs silenciosos.
     `,
-        quiz: {
-            question: "¿Cuál es el tipo de retorno obligatorio de la función main según el estándar ISO C++?",
+                        quiz: {
+        question: "¿Cuál es el tipo de retorno obligatorio de la función main según el estándar ISO C++?",
             options: ["void", "int", "float", "bool"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Escribe una función main mínima válida que retorne explícitamente el código de error -1.",
-            initialCode: "",
-            expectedRegex: /int\s+main\s*\(\s*\)\s*\{\s*return\s+-1\s*;\s*\}/,
-            solution: "int main() { return -1; }"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 4,
+    codeChallenge: {
+        instruction: "Escribe una función main mínima válida que retorne explícitamente el código de error -1.",
+            initialCode: "",
+                expectedRegex: /int\s+main\s*\(\s*\)\s*\{\s*return\s+-1\s*;\s*\}/,
+                    solution: "int main() { return -1; }"
+    }
+},
+{
+    id: 4,
         title: "1.2: Comentarios y Documentación Técnica",
-        phase: "Módulo 1: Fundamentos",
-        description: "Sintaxis de comentarios y estándares de documentación (Doxygen).",
-        content: `
+            phase: "Módulo 1: Fundamentos",
+                description: "Sintaxis de comentarios y estándares de documentación (Doxygen).",
+                    content: `
 # 1. Comentarios Sintácticos
 
 El compilador ignora completamente los comentarios; son eliminados durante la fase de análisis léxico (antes del preprocesamiento completo). Existen dos tipos:
@@ -210,24 +231,24 @@ double raiz(double n);
 
 El uso de etiquetas como \`@brief\`, \`@param\`, y \`@return\` proporciona una estructura clara y legible.
     `,
-        quiz: {
-            question: "¿Qué herramienta es el estándar industrial para generar documentación a partir de comentarios en C++?",
+                        quiz: {
+        question: "¿Qué herramienta es el estándar industrial para generar documentación a partir de comentarios en C++?",
             options: ["Javadoc", "Doxygen", "Sphinx", "Man pages"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Escribe un comentario de línea simple.",
-            initialCode: "",
-            expectedRegex: /\/\/.*/,
-            solution: "// Comentario"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 5,
+    codeChallenge: {
+        instruction: "Escribe un comentario de línea simple.",
+            initialCode: "",
+                expectedRegex: /\/\/.*/,
+                    solution: "// Comentario"
+    }
+},
+{
+    id: 5,
         title: "1.3: Variables, Inicialización y Tipos Fundamentales",
-        phase: "Módulo 1: Fundamentos",
-        description: "Declaración, definición, inicialización uniforme y el sistema de tipos.",
-        content: `
+            phase: "Módulo 1: Fundamentos",
+                description: "Declaración, definición, inicialización uniforme y el sistema de tipos.",
+                    content: `
 # 1. El Concepto de Variable
 
 Una variable en C++ es una abstracción de una región de memoria. Tiene tres atributos principales:
@@ -266,24 +287,24 @@ auto s = "Hola"; // s es const char*
 
 **AAA (Almost Always Auto)**: Es una filosofía moderna que sugiere usar \`auto\` siempre que sea posible para evitar conversiones accidentales y refactorizar más fácilmente, siempre que no comprometa la legibilidad.
     `,
-        quiz: {
-            question: "¿Qué ventaja ofrece la inicialización uniforme (int x{5}) sobre la asignación tradicional?",
+                        quiz: {
+        question: "¿Qué ventaja ofrece la inicialización uniforme (int x{5}) sobre la asignación tradicional?",
             options: ["Es más rápida", "Previene conversiones de tipo con pérdida de datos (narrowing)", "Permite inicializar constantes", "Es compatible con C"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara una variable entera 'contador' inicializada a 0 usando inicialización uniforme (llaves).",
-            initialCode: "",
-            expectedRegex: /int\s+contador\s*\{\s*0\s*\}\s*;/,
-            solution: "int contador{0};"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 6,
+    codeChallenge: {
+        instruction: "Declara una variable entera 'contador' inicializada a 0 usando inicialización uniforme (llaves).",
+            initialCode: "",
+                expectedRegex: /int\s+contador\s*\{\s*0\s*\}\s*;/,
+                    solution: "int contador{0};"
+    }
+},
+{
+    id: 6,
         title: "1.4: I/O Streams y Buffering",
-        phase: "Módulo 1: Fundamentos",
-        description: "Arquitectura de iostream, std::cout, std::cin y sincronización.",
-        content: `
+            phase: "Módulo 1: Fundamentos",
+                description: "Arquitectura de iostream, std::cout, std::cin y sincronización.",
+                    content: `
 # 1. La Abstracción de Streams
 
 C++ maneja la entrada/salida (I/O) como flujos de bytes secuenciales. La librería \`<iostream>\` define los objetos globales para interactuar con los dispositivos estándar.
@@ -320,28 +341,28 @@ std::ios::sync_with_stdio(false);
 std::cin.tie(nullptr);
 \`\`\`
     `,
-        quiz: {
-            question: "¿Por qué se recomienda usar '\\n' en lugar de std::endl en aplicaciones de alto rendimiento?",
+                        quiz: {
+        question: "¿Por qué se recomienda usar '\\n' en lugar de std::endl en aplicaciones de alto rendimiento?",
             options: ["\\n es estándar POSIX", "std::endl fuerza un vaciado (flush) del buffer, lo cual es una operación costosa", "std::endl ocupa más memoria", "\\n es más legible"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Escribe una sentencia para leer un entero en la variable 'valor' usando cin.",
-            initialCode: "int valor;\n",
-            expectedRegex: /std::cin\s*>>\s*valor\s*;/,
-            solution: "std::cin >> valor;"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Escribe una sentencia para leer un entero en la variable 'valor' usando cin.",
+            initialCode: "int valor;\n",
+                expectedRegex: /std::cin\s*>>\s*valor\s*;/,
+                    solution: "std::cin >> valor;"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 2: SISTEMA DE TIPOS Y MEMORIA
-    // ===========================================================================
-    {
-        id: 7,
+// ===========================================================================
+// MÓDULO 2: SISTEMA DE TIPOS Y MEMORIA
+// ===========================================================================
+{
+    id: 7,
         title: "2.1: Bits, Bytes y Representación de Datos",
-        phase: "Módulo 2: Tipos y Memoria",
-        description: "Fundamentos de arquitectura de computadoras: Direccionamiento, Endianness y Padding.",
-        content: `
+            phase: "Módulo 2: Tipos y Memoria",
+                description: "Fundamentos de arquitectura de computadoras: Direccionamiento, Endianness y Padding.",
+                    content: `
 # 1. La Unidad Mínima: El Byte
 
 En C++, la unidad fundamental de memoria es el **byte**. Por definición del estándar, un \`char\` tiene un tamaño de 1 byte. En la inmensa mayoría de arquitecturas modernas, 1 byte = 8 bits (octeto), aunque el estándar permite bytes mayores (ver \`CHAR_BIT\` en \`<climits>\`).
@@ -381,24 +402,24 @@ struct S {
 
 Aunque \`char\` + \`int\` suman 5 bytes teóricos, \`sizeof(S)\` será 8 bytes. El compilador inserta "basura" (padding) para que \`int i\` comience en una dirección múltiplo de 4.
     `,
-        quiz: {
-            question: "¿Qué arquitectura almacena el byte menos significativo en la dirección de memoria más baja?",
+                        quiz: {
+        question: "¿Qué arquitectura almacena el byte menos significativo en la dirección de memoria más baja?",
             options: ["Big Endian", "Little Endian", "Middle Endian", "Network Byte Order"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Usa sizeof para obtener el tamaño en bytes de un 'long long'.",
-            initialCode: "#include <iostream>\n",
-            expectedRegex: /sizeof\s*\(\s*long\s+long\s*\)/,
-            solution: "std::cout << sizeof(long long);"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 8,
+    codeChallenge: {
+        instruction: "Usa sizeof para obtener el tamaño en bytes de un 'long long'.",
+            initialCode: "#include <iostream>\n",
+                expectedRegex: /sizeof\s*\(\s*long\s+long\s*\)/,
+                    solution: "std::cout << sizeof(long long);"
+    }
+},
+{
+    id: 8,
         title: "2.2: Enteros: Signo y Desbordamiento",
-        phase: "Módulo 2: Tipos y Memoria",
-        description: "Tipos integrales, complemento a dos y comportamiento indefinido.",
-        content: `
+            phase: "Módulo 2: Tipos y Memoria",
+                description: "Tipos integrales, complemento a dos y comportamiento indefinido.",
+                    content: `
 # 1. Tipos Enteros
 
 C++ garantiza tamaños mínimos, pero no exactos (dependen de la implementación).
@@ -426,24 +447,24 @@ El comportamiento al exceder el rango de un entero es una de las áreas más pel
 
 > **Regla de Oro**: Nunca confíe en el desbordamiento de enteros con signo. Use \`unsigned\` si necesita aritmética modular, o verifique los límites antes de operar.
     `,
-        quiz: {
-            question: "¿Cuál es el comportamiento de desbordar un entero CON signo (signed int)?",
+                        quiz: {
+        question: "¿Cuál es el comportamiento de desbordar un entero CON signo (signed int)?",
             options: ["Vuelve a 0", "Se vuelve negativo (wrap-around)", "Lanza una excepción", "Comportamiento Indefinido (Undefined Behavior)"],
-            correctAnswer: 3
-        },
-        codeChallenge: {
-            instruction: "Declara un entero de exactamente 32 bits con signo usando el tipo moderno.",
-            initialCode: "#include <cstdint>\n",
-            expectedRegex: /int32_t\s+\w+/,
-            solution: "int32_t x;"
-        }
+                correctAnswer: 3
     },
-    {
-        id: 9,
+    codeChallenge: {
+        instruction: "Declara un entero de exactamente 32 bits con signo usando el tipo moderno.",
+            initialCode: "#include <cstdint>\n",
+                expectedRegex: /int32_t\s+\w+/,
+                    solution: "int32_t x;"
+    }
+},
+{
+    id: 9,
         title: "2.3: Coma Flotante (IEEE 754)",
-        phase: "Módulo 2: Tipos y Memoria",
-        description: "Representación de reales, precisión y valores especiales (NaN, Inf).",
-        content: `
+            phase: "Módulo 2: Tipos y Memoria",
+                description: "Representación de reales, precisión y valores especiales (NaN, Inf).",
+                    content: `
 # 1. El Estándar IEEE 754
 
 C++ utiliza este estándar para \`float\` y \`double\`. Los números se almacenan como notación científica binaria:
@@ -472,24 +493,24 @@ bool casiIguales(double a, double b) {
 *   **NaN (Not a Number)**: Resultado de operaciones inválidas (\`0.0 / 0.0\`, \`sqrt(-1)\`).
     *   Propiedad única: \`NaN != NaN\` es **verdadero**. Cualquier comparación con NaN retorna falso (excepto \`!=\`).
     `,
-        quiz: {
-            question: "¿Por qué (0.1 + 0.2 == 0.3) evalúa a falso en C++?",
+                        quiz: {
+        question: "¿Por qué (0.1 + 0.2 == 0.3) evalúa a falso en C++?",
             options: ["Error del compilador", "Error de hardware", "Imprecisión inherente a la representación binaria de decimales", "C++ no sabe sumar"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Declara un double 'pi' con valor 3.14159.",
-            initialCode: "",
-            expectedRegex: /double\s+pi\s*(=|\{)\s*3\.14159/,
-            solution: "double pi = 3.14159;"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 10,
+    codeChallenge: {
+        instruction: "Declara un double 'pi' con valor 3.14159.",
+            initialCode: "",
+                expectedRegex: /double\s+pi\s*(=|\{)\s*3\.14159/,
+                    solution: "double pi = 3.14159;"
+    }
+},
+{
+    id: 10,
         title: "2.4: Caracteres y Codificación (Unicode)",
-        phase: "Módulo 2: Tipos y Memoria",
-        description: "ASCII, UTF-8 y los nuevos tipos de caracteres en C++20.",
-        content: `
+            phase: "Módulo 2: Tipos y Memoria",
+                description: "ASCII, UTF-8 y los nuevos tipos de caracteres en C++20.",
+                    content: `
 # 1. El Tipo char
 
 Tradicionalmente, \`char\` es 1 byte. Suficiente para ASCII (0-127), que cubre inglés y símbolos básicos.
@@ -512,24 +533,24 @@ La recomendación moderna (UTF-8 Manifesto) es usar \`std::string\` (basado en \
 
 > **Nota**: \`std::string::length()\` devuelve el número de **bytes**, no de caracteres. En UTF-8, "Ñ" ocupa 2 bytes.
     `,
-        quiz: {
-            question: "¿Qué tipo introducido en C++20 está diseñado específicamente para UTF-8?",
+                        quiz: {
+        question: "¿Qué tipo introducido en C++20 está diseñado específicamente para UTF-8?",
             options: ["char", "wchar_t", "char8_t", "byte"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Declara un char con la letra 'A'.",
-            initialCode: "",
-            expectedRegex: /char\s+\w+\s*(=|\{)\s*'A'/,
-            solution: "char c = 'A';"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 11,
+    codeChallenge: {
+        instruction: "Declara un char con la letra 'A'.",
+            initialCode: "",
+                expectedRegex: /char\s+\w+\s*(=|\{)\s*'A'/,
+                    solution: "char c = 'A';"
+    }
+},
+{
+    id: 11,
         title: "2.5: Constantes y Tiempo de Compilación",
-        phase: "Módulo 2: Tipos y Memoria",
-        description: "Inmutabilidad, constexpr y evaluación en tiempo de compilación.",
-        content: `
+            phase: "Módulo 2: Tipos y Memoria",
+                description: "Inmutabilidad, constexpr y evaluación en tiempo de compilación.",
+                    content: `
 # 1. const (Read-Only)
 
 La palabra clave \`const\` es una promesa: "No modificaré esta variable". El compilador hace cumplir esta promesa generando un error si intentas escribir en ella.
@@ -552,28 +573,28 @@ int y; cin >> y;
 int z = cuadrado(y); // ERROR. 'y' no es constante.
 \`\`\`
     `,
-        quiz: {
-            question: "¿Qué palabra clave de C++20 fuerza la ejecución inmediata (tiempo de compilación)?",
+                        quiz: {
+        question: "¿Qué palabra clave de C++20 fuerza la ejecución inmediata (tiempo de compilación)?",
             options: ["const", "constexpr", "consteval", "static"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Declara una constante entera PI_APROX con valor 3.",
-            initialCode: "",
-            expectedRegex: /const\s+int\s+PI_APROX\s*(=|\{)\s*3/,
-            solution: "const int PI_APROX = 3;"
-        }
+                correctAnswer: 2
     },
+    codeChallenge: {
+        instruction: "Declara una constante entera PI_APROX con valor 3.",
+            initialCode: "",
+                expectedRegex: /const\s+int\s+PI_APROX\s*(=|\{)\s*3/,
+                    solution: "const int PI_APROX = 3;"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 3: OPERADORES Y EXPRESIONES
-    // ===========================================================================
-    {
-        id: 12,
+// ===========================================================================
+// MÓDULO 3: OPERADORES Y EXPRESIONES
+// ===========================================================================
+{
+    id: 12,
         title: "3.1: Operadores Aritméticos y Precedencia",
-        phase: "Módulo 3: Operadores",
-        description: "Reglas de evaluación, división entera y módulo.",
-        content: `
+            phase: "Módulo 3: Operadores",
+                description: "Reglas de evaluación, división entera y módulo.",
+                    content: `
 # 1. División Entera
 
 En C++, el operador \`/\` se comporta diferente según los tipos de sus operandos.
@@ -598,24 +619,24 @@ C++ tiene una tabla de precedencia compleja.
 
 > **Consejo**: No memorice la tabla completa. Use paréntesis \`()\` para hacer explícita su intención. Es más legible y seguro.
     `,
-        quiz: {
-            question: "¿Cuál es el resultado de la expresión entera 7 / 2?",
+                        quiz: {
+        question: "¿Cuál es el resultado de la expresión entera 7 / 2?",
             options: ["3.5", "3", "4", "Error"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Calcula el resto de dividir 10 entre 3 y guárdalo en 'r'.",
-            initialCode: "int r;",
-            expectedRegex: /r\s*=\s*10\s*%\s*3/,
-            solution: "r = 10 % 3;"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 13,
+    codeChallenge: {
+        instruction: "Calcula el resto de dividir 10 entre 3 y guárdalo en 'r'.",
+            initialCode: "int r;",
+                expectedRegex: /r\s*=\s*10\s*%\s*3/,
+                    solution: "r = 10 % 3;"
+    }
+},
+{
+    id: 13,
         title: "3.2: Incremento y Efectos Secundarios",
-        phase: "Módulo 3: Operadores",
-        description: "Prefijo vs Sufijo y el costo oculto.",
-        content: `
+            phase: "Módulo 3: Operadores",
+                description: "Prefijo vs Sufijo y el costo oculto.",
+                    content: `
 # 1. Prefijo (++i) vs Sufijo (i++)
 
 Aunque ambos incrementan la variable, su semántica de retorno es distinta:
@@ -639,24 +660,24 @@ Esto es un costo innecesario.
 C++ no define el orden de evaluación de operandos en la mayoría de los casos.
 \`f(i++, i++)\` -> **Undefined Behavior**. No sabemos qué argumento se evalúa primero. Nunca modifique una variable dos veces en la misma expresión.
     `,
-        quiz: {
-            question: "¿Por qué se prefiere ++it sobre it++ para iteradores?",
+                        quiz: {
+        question: "¿Por qué se prefiere ++it sobre it++ para iteradores?",
             options: ["Es más bonito", "Evita la creación de una copia temporal del objeto", "Es un estándar antiguo", "it++ está deprecado"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Incrementa la variable 'x' usando el operador de prefijo.",
-            initialCode: "int x = 0;",
-            expectedRegex: /\+\+x/,
-            solution: "++x;"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 14,
+    codeChallenge: {
+        instruction: "Incrementa la variable 'x' usando el operador de prefijo.",
+            initialCode: "int x = 0;",
+                expectedRegex: /\+\+x/,
+                    solution: "++x;"
+    }
+},
+{
+    id: 14,
         title: "3.3: Operadores Lógicos y Short-Circuit",
-        phase: "Módulo 3: Operadores",
-        description: "Lógica booleana y evaluación perezosa.",
-        content: `
+            phase: "Módulo 3: Operadores",
+                description: "Lógica booleana y evaluación perezosa.",
+                    content: `
 # 1. Operadores Lógicos
 
 *   \`&&\` (AND): Verdadero si ambos son verdaderos.
@@ -680,24 +701,24 @@ Si \`ptr\` es nulo, la segunda parte no se ejecuta, evitando un crash por derefe
 
 \`&\` y \`|\` son operadores a nivel de bit. No hacen cortocircuito y trabajan con enteros, no booleanos lógicos. Confundirlos es un bug común.
     `,
-        quiz: {
-            question: "En la expresión (false && funcion()), ¿se ejecuta 'funcion()'?",
+                        quiz: {
+        question: "En la expresión (false && funcion()), ¿se ejecuta 'funcion()'?",
             options: ["Sí", "No", "Depende del compilador", "A veces"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Escribe una condición segura que verifique si 'ptr' no es nulo Y su valor es mayor a 0.",
-            initialCode: "int* ptr = nullptr;",
-            expectedRegex: /ptr\s*&&\s*\*\s*ptr\s*>\s*0/,
-            solution: "if (ptr && *ptr > 0)"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 15,
+    codeChallenge: {
+        instruction: "Escribe una condición segura que verifique si 'ptr' no es nulo Y su valor es mayor a 0.",
+            initialCode: "int* ptr = nullptr;",
+                expectedRegex: /ptr\s*&&\s*\*\s*ptr\s*>\s*0/,
+                    solution: "if (ptr && *ptr > 0)"
+    }
+},
+{
+    id: 15,
         title: "3.4: Operadores Bitwise (Manipulación de Bits)",
-        phase: "Módulo 3: Operadores",
-        description: "Máscaras, desplazamientos y operaciones de bajo nivel.",
-        content: `
+            phase: "Módulo 3: Operadores",
+                description: "Máscaras, desplazamientos y operaciones de bajo nivel.",
+                    content: `
 # 1. Operadores Bitwise
 
 Operan sobre la representación binaria de los enteros. Esenciales en sistemas embebidos, drivers y criptografía.
@@ -723,28 +744,28 @@ if (estado & FLAG_VISIBLE) { ... } // Comprobar (Check)
 estado &= ~FLAG_VISIBLE; // Apagar (Clear)
 \`\`\`
     `,
-        quiz: {
-            question: "¿Qué operador se usa para 'apagar' (poner a 0) un bit específico usando una máscara?",
+                        quiz: {
+        question: "¿Qué operador se usa para 'apagar' (poner a 0) un bit específico usando una máscara?",
             options: ["| (OR)", "& (AND) con el inverso (~)", "^ (XOR)", ">> (Shift)"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Multiplica la variable 'x' por 8 usando desplazamiento de bits.",
-            initialCode: "int x = 2;",
-            expectedRegex: /x\s*<<\s*3/,
-            solution: "x = x << 3;"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Multiplica la variable 'x' por 8 usando desplazamiento de bits.",
+            initialCode: "int x = 2;",
+                expectedRegex: /x\s*<<\s*3/,
+                    solution: "x = x << 3;"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 4: ÁMBITO Y ALMACENAMIENTO (SCOPE & STORAGE)
-    // ===========================================================================
-    {
-        id: 16,
+// ===========================================================================
+// MÓDULO 4: ÁMBITO Y ALMACENAMIENTO (SCOPE & STORAGE)
+// ===========================================================================
+{
+    id: 16,
         title: "4.1: Ámbito (Scope) y Duración de Almacenamiento",
-        phase: "Módulo 4: Scope y Storage",
-        description: "Vida y visibilidad de las variables: Stack vs Static vs Heap.",
-        content: `
+            phase: "Módulo 4: Scope y Storage",
+                description: "Vida y visibilidad de las variables: Stack vs Static vs Heap.",
+                    content: `
 # 1. Ámbito (Scope) vs Duración (Lifetime)
 
 *   **Ámbito**: Dónde es visible el nombre de una variable (tiempo de compilación).
@@ -766,24 +787,24 @@ Es una de las palabras más sobrecargadas en C++.
 
 > **Consejo**: Evite variables estáticas no constantes. Son el enemigo del multithreading y las pruebas unitarias.
     `,
-        quiz: {
-            question: "¿Cuándo se destruye una variable local estática (static) declarada dentro de una función?",
+                        quiz: {
+        question: "¿Cuándo se destruye una variable local estática (static) declarada dentro de una función?",
             options: ["Al salir de la función", "Nunca", "Al finalizar el programa", "Cuando se llama al destructor manualmente"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Declara una variable 'contador' que mantenga su valor entre llamadas a la función.",
-            initialCode: "void funcion() {\n    // Tu código\n}",
-            expectedRegex: /static\s+int\s+contador/,
-            solution: "static int contador = 0;"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 17,
+    codeChallenge: {
+        instruction: "Declara una variable 'contador' que mantenga su valor entre llamadas a la función.",
+            initialCode: "void funcion() {\n    // Tu código\n}",
+                expectedRegex: /static\s+int\s+contador/,
+                    solution: "static int contador = 0;"
+    }
+},
+{
+    id: 17,
         title: "4.2: Namespaces y Resolución de Nombres",
-        phase: "Módulo 4: Scope y Storage",
-        description: "Evitando colisiones de nombres y organizando el código.",
-        content: `
+            phase: "Módulo 4: Scope y Storage",
+                description: "Evitando colisiones de nombres y organizando el código.",
+                    content: `
 # 1. El Problema de la Colisión
 
 Si dos librerías definen una clase \`Vector\`, el compilador no sabrá cuál usar. Los Namespaces resuelven esto creando ámbitos con nombre.
@@ -809,28 +830,28 @@ Graficos::Vector v2;
 \`namespace { ... }\`
 Todo lo declarado aquí es accesible solo dentro del archivo actual (equivalente a \`static\` global, pero más moderno). Úselo para funciones auxiliares privadas del módulo.
     `,
-        quiz: {
-            question: "¿Por qué se considera mala práctica poner 'using namespace std;' en un archivo de cabecera (.h)?",
+                        quiz: {
+        question: "¿Por qué se considera mala práctica poner 'using namespace std;' en un archivo de cabecera (.h)?",
             options: ["Hace la compilación lenta", "Contamina el namespace global de todos los archivos que incluyan ese header", "No es estándar", "Causa errores de linkado"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara un namespace llamado 'MiMotor'.",
-            initialCode: "",
-            expectedRegex: /namespace\s+MiMotor\s*\{/,
-            solution: "namespace MiMotor {}"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Declara un namespace llamado 'MiMotor'.",
+            initialCode: "",
+                expectedRegex: /namespace\s+MiMotor\s*\{/,
+                    solution: "namespace MiMotor {}"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 5: FLUJO DE CONTROL
-    // ===========================================================================
-    {
-        id: 18,
+// ===========================================================================
+// MÓDULO 5: FLUJO DE CONTROL
+// ===========================================================================
+{
+    id: 18,
         title: "5.1: Selección (if, switch) y Atributos",
-        phase: "Módulo 5: Control Flow",
-        description: "Ramificación condicional avanzada y [[fallthrough]].",
-        content: `
+            phase: "Módulo 5: Control Flow",
+                description: "Ramificación condicional avanzada y [[fallthrough]].",
+                    content: `
 # 1. If con Inicializador (C++17)
 
 Permite declarar una variable cuyo ámbito se limita al bloque if/else.
@@ -860,24 +881,24 @@ switch (token) {
 }
 \`\`\`
     `,
-        quiz: {
-            question: "¿Qué atributo de C++17 silencia la advertencia de 'caída' (fallthrough) en un switch?",
+                        quiz: {
+        question: "¿Qué atributo de C++17 silencia la advertencia de 'caída' (fallthrough) en un switch?",
             options: ["[[nodiscard]]", "[[maybe_unused]]", "[[fallthrough]]", "[[noreturn]]"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Escribe un if con inicialización que declare 'x = 5' y compruebe si 'x > 0'.",
-            initialCode: "",
-            expectedRegex: /if\s*\(\s*(int|auto)\s+x\s*(=|\{)\s*5\s*(\}|;)\s*x\s*>\s*0\s*\)/,
-            solution: "if (int x = 5; x > 0) {}"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 19,
+    codeChallenge: {
+        instruction: "Escribe un if con inicialización que declare 'x = 5' y compruebe si 'x > 0'.",
+            initialCode: "",
+                expectedRegex: /if\s*\(\s*(int|auto)\s+x\s*(=|\{)\s*5\s*(\}|;)\s*x\s*>\s*0\s*\)/,
+                    solution: "if (int x = 5; x > 0) {}"
+    }
+},
+{
+    id: 19,
         title: "5.2: Bucles y Range-Based For",
-        phase: "Módulo 5: Control Flow",
-        description: "Iteración moderna y eficiente.",
-        content: `
+            phase: "Módulo 5: Control Flow",
+                description: "Iteración moderna y eficiente.",
+                    content: `
 # 1. Range-Based For (C++11)
 
 La forma preferida de iterar sobre contenedores (arrays, vectores).
@@ -906,28 +927,28 @@ for (int i = 0; auto& x : coleccion) {
 *   **\`break\`**: Sale del bucle inmediatamente.
 *   **\`continue\`**: Salta el resto del cuerpo y va a la siguiente iteración.
     `,
-        quiz: {
-            question: "¿Cuál es la forma más eficiente de iterar un vector de objetos grandes (sin copiarlos) en modo lectura?",
+                        quiz: {
+        question: "¿Cuál es la forma más eficiente de iterar un vector de objetos grandes (sin copiarlos) en modo lectura?",
             options: ["for (auto x : vec)", "for (auto& x : vec)", "for (const auto& x : vec)", "for (int i=0; i<vec.size(); ++i)"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Escribe un range-based for que itere sobre 'nums' usando referencia constante.",
-            initialCode: "std::vector<int> nums;\n// Tu código",
-            expectedRegex: /for\s*\(\s*const\s+auto&\s+\w+\s*:\s*nums\s*\)/,
-            solution: "for (const auto& n : nums) {}"
-        }
+                correctAnswer: 2
     },
+    codeChallenge: {
+        instruction: "Escribe un range-based for que itere sobre 'nums' usando referencia constante.",
+            initialCode: "std::vector<int> nums;\n// Tu código",
+                expectedRegex: /for\s*\(\s*const\s+auto&\s+\w+\s*:\s*nums\s*\)/,
+                    solution: "for (const auto& n : nums) {}"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 6: FUNCIONES
-    // ===========================================================================
-    {
-        id: 20,
+// ===========================================================================
+// MÓDULO 6: FUNCIONES
+// ===========================================================================
+{
+    id: 20,
         title: "6.1: Parámetros y Paso por Valor/Referencia",
-        phase: "Módulo 6: Funciones",
-        description: "Optimizando la transferencia de datos.",
-        content: `
+            phase: "Módulo 6: Funciones",
+                description: "Optimizando la transferencia de datos.",
+                    content: `
 # 1. Paso por Valor (Default)
 
 Se crea una **copia** del argumento.
@@ -947,24 +968,24 @@ Se pasa la dirección de memoria, pero con sintaxis de variable normal.
 \`void foo(int* ptr);\`
 Similar a la referencia, pero puede ser \`nullptr\`. Úsalo solo si el argumento es opcional.
     `,
-        quiz: {
-            question: "¿Cuál es la forma recomendada de pasar un std::string a una función si no se va a modificar?",
+                        quiz: {
+        question: "¿Cuál es la forma recomendada de pasar un std::string a una función si no se va a modificar?",
             options: ["Por valor (std::string s)", "Por referencia constante (const std::string& s)", "Por puntero (std::string* s)", "Por referencia (std::string& s)"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara una función 'imprimir' que reciba un string por referencia constante.",
-            initialCode: "",
-            expectedRegex: /void\s+imprimir\s*\(\s*const\s+std::string&\s+\w+\s*\)/,
-            solution: "void imprimir(const std::string& s);"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 21,
+    codeChallenge: {
+        instruction: "Declara una función 'imprimir' que reciba un string por referencia constante.",
+            initialCode: "",
+                expectedRegex: /void\s+imprimir\s*\(\s*const\s+std::string&\s+\w+\s*\)/,
+                    solution: "void imprimir(const std::string& s);"
+    }
+},
+{
+    id: 21,
         title: "6.2: Sobrecarga y Argumentos por Defecto",
-        phase: "Módulo 6: Funciones",
-        description: "Polimorfismo estático.",
-        content: `
+            phase: "Módulo 6: Funciones",
+                description: "Polimorfismo estático.",
+                    content: `
 # 1. Sobrecarga (Overloading)
 
 Puedes tener múltiples funciones con el mismo nombre si sus parámetros (firma) son distintos.
@@ -979,28 +1000,28 @@ El compilador decide cuál llamar basándose en los tipos de los argumentos (Nam
 Los argumentos por defecto deben ir al final.
 > **Cuidado**: Si cambias el valor por defecto en el .h, debes recompilar todo el código cliente, ya que el valor se "pega" en el punto de llamada.
     `,
-        quiz: {
-            question: "¿Qué requisito deben cumplir los argumentos por defecto?",
+                        quiz: {
+        question: "¿Qué requisito deben cumplir los argumentos por defecto?",
             options: ["Deben ser constantes", "Deben estar al final de la lista de parámetros", "Deben ser punteros", "No hay requisitos"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara una función 'log' que tome un mensaje y un nivel de severidad (int) con valor por defecto 1.",
-            initialCode: "",
-            expectedRegex: /void\s+log\s*\(\s*(std::)?string\s+\w+\s*,\s*int\s+\w+\s*=\s*1\s*\)/,
-            solution: "void log(string msg, int level = 1);"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Declara una función 'log' que tome un mensaje y un nivel de severidad (int) con valor por defecto 1.",
+            initialCode: "",
+                expectedRegex: /void\s+log\s*\(\s*(std::)?string\s+\w+\s*,\s*int\s+\w+\s*=\s*1\s*\)/,
+                    solution: "void log(string msg, int level = 1);"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 7: PUNTEROS Y REFERENCIAS
-    // ===========================================================================
-    {
-        id: 22,
+// ===========================================================================
+// MÓDULO 7: PUNTEROS Y REFERENCIAS
+// ===========================================================================
+{
+    id: 22,
         title: "7.1: Punteros y Memoria",
-        phase: "Módulo 7: Punteros",
-        description: "El poder y el peligro de C++.",
-        content: `
+            phase: "Módulo 7: Punteros",
+                description: "El poder y el peligro de C++.",
+                    content: `
 # 1. ¿Qué es un Puntero?
 
 Una variable que almacena una **dirección de memoria**.
@@ -1017,24 +1038,24 @@ Antiguamente se usaba \`NULL\` (que es 0). Esto causaba ambigüedad en sobrecarg
 
 Puntero genérico. Puede apuntar a cualquier cosa, pero no se puede dereferenciar sin un cast. Es la base del polimorfismo en C puro.
     `,
-        quiz: {
-            question: "¿Qué palabra clave moderna reemplaza a NULL?",
+                        quiz: {
+        question: "¿Qué palabra clave moderna reemplaza a NULL?",
             options: ["nil", "null", "nullptr", "None"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Declara un puntero a entero inicializado a nulo.",
-            initialCode: "",
-            expectedRegex: /int\*\s+\w+\s*(=|\{)\s*nullptr/,
-            solution: "int* p = nullptr;"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 23,
+    codeChallenge: {
+        instruction: "Declara un puntero a entero inicializado a nulo.",
+            initialCode: "",
+                expectedRegex: /int\*\s+\w+\s*(=|\{)\s*nullptr/,
+                    solution: "int* p = nullptr;"
+    }
+},
+{
+    id: 23,
         title: "7.2: Referencias vs Punteros",
-        phase: "Módulo 7: Punteros",
-        description: "Cuándo usar cuál.",
-        content: `
+            phase: "Módulo 7: Punteros",
+                description: "Cuándo usar cuál.",
+                    content: `
 # Referencias (T&)
 *   **No pueden ser nulas**.
 *   **Deben inicializarse** al declararse.
@@ -1048,28 +1069,28 @@ Puntero genérico. Puede apuntar a cualquier cosa, pero no se puede dereferencia
 
 > **Best Practice**: Usa **Referencias** por defecto. Usa **Punteros** solo si necesitas que sea opcional (nulo) o reasignable.
     `,
-        quiz: {
-            question: "¿Puede una referencia en C++ ser nula?",
+                        quiz: {
+        question: "¿Puede una referencia en C++ ser nula?",
             options: ["Sí", "No", "Depende del compilador", "Solo si es const"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara una referencia 'ref' a la variable 'x'.",
-            initialCode: "int x = 10;\n// Tu código",
-            expectedRegex: /int&\s+ref\s*(=|\{)\s*x/,
-            solution: "int& ref = x;"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Declara una referencia 'ref' a la variable 'x'.",
+            initialCode: "int x = 10;\n// Tu código",
+                expectedRegex: /int&\s+ref\s*(=|\{)\s*x/,
+                    solution: "int& ref = x;"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 8: ARRAYS Y STRINGS
-    // ===========================================================================
-    {
-        id: 24,
+// ===========================================================================
+// MÓDULO 8: ARRAYS Y STRINGS
+// ===========================================================================
+{
+    id: 24,
         title: "8.1: C-Style Arrays vs std::array",
-        phase: "Módulo 8: Arrays",
-        description: "Modernizando los arreglos.",
-        content: `
+            phase: "Módulo 8: Arrays",
+                description: "Modernizando los arreglos.",
+                    content: `
 # C-Style Arrays
 \`int arr[5];\`
 *   Decaen a punteros automáticamente (pérdida de información de tamaño).
@@ -1086,24 +1107,24 @@ Un wrapper delgado sobre arrays fijos.
 
 > **Consejo**: Usa siempre \`std::array\` para tamaños fijos y \`std::vector\` para dinámicos.
     `,
-        quiz: {
-            question: "¿Cuál es la principal desventaja de los arrays estilo C al pasarlos a funciones?",
+                        quiz: {
+        question: "¿Cuál es la principal desventaja de los arrays estilo C al pasarlos a funciones?",
             options: ["Son lentos", "Decaen a punteros y pierden su tamaño", "No pueden almacenar objetos", "Ocupan más memoria"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara un std::array de 3 flotantes.",
-            initialCode: "#include <array>\n",
-            expectedRegex: /std::array<\s*float\s*,\s*3\s*>\s+\w+/,
-            solution: "std::array<float, 3> arr;"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 25,
+    codeChallenge: {
+        instruction: "Declara un std::array de 3 flotantes.",
+            initialCode: "#include <array>\n",
+                expectedRegex: /std::array<\s*float\s*,\s*3\s*>\s+\w+/,
+                    solution: "std::array<float, 3> arr;"
+    }
+},
+{
+    id: 25,
         title: "8.2: std::string y std::string_view",
-        phase: "Módulo 8: Arrays",
-        description: "Manejo eficiente de texto.",
-        content: `
+            phase: "Módulo 8: Arrays",
+                description: "Manejo eficiente de texto.",
+                    content: `
 # std::string
 Dueño de la memoria. Realiza copias profundas.
 \`std::string s = "Hola";\` (Allocation en Heap si es largo).
@@ -1119,24 +1140,24 @@ void procesar(std::string_view sv) {
 }
 \`\`\`
     `,
-        quiz: {
-            question: "¿Qué ventaja tiene string_view sobre string como parámetro?",
+                        quiz: {
+        question: "¿Qué ventaja tiene string_view sobre string como parámetro?",
             options: ["Es modificable", "Evita copias de memoria y asignaciones", "Es compatible con C", "Tiene más métodos"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Escribe una función que reciba un string_view.",
-            initialCode: "#include <string_view>\n",
-            expectedRegex: /void\s+\w+\s*\(\s*std::string_view\s+\w+\s*\)/,
-            solution: "void f(std::string_view s);"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 26,
+    codeChallenge: {
+        instruction: "Escribe una función que reciba un string_view.",
+            initialCode: "#include <string_view>\n",
+                expectedRegex: /void\s+\w+\s*\(\s*std::string_view\s+\w+\s*\)/,
+                    solution: "void f(std::string_view s);"
+    }
+},
+{
+    id: 26,
         title: "9.1: Clases y Layout en Memoria",
-        phase: "Módulo 9: OOP",
-        description: "Cómo se representan los objetos en RAM.",
-        content: `
+            phase: "Módulo 9: OOP",
+                description: "Cómo se representan los objetos en RAM.",
+                    content: `
 # 1. El Puntero 'this'
 
 Dentro de cualquier método no estático, existe un puntero oculto llamado \`this\`.
@@ -1171,24 +1192,24 @@ El idioma más importante de C++.
 
 Como el destructor se llama automáticamente cuando el objeto sale de ámbito (scope), es imposible olvidar liberar el recurso, incluso si hay excepciones.
     `,
-        quiz: {
-            question: "¿Qué almacena un objeto de una clase en su memoria asignada (sin funciones virtuales)?",
+                        quiz: {
+        question: "¿Qué almacena un objeto de una clase en su memoria asignada (sin funciones virtuales)?",
             options: ["Sus variables miembro y punteros a sus funciones", "Solo sus variables miembro (y padding)", "Todo el código de la clase", "Nada"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara un destructor para la clase 'Archivo'.",
-            initialCode: "class Archivo {\npublic:\n    // Tu código\n};",
-            expectedRegex: /~Archivo\s*\(\s*\)/,
-            solution: "~Archivo() {}"
-        }
+                correctAnswer: 1
     },
-    {
-        id: 27,
+    codeChallenge: {
+        instruction: "Declara un destructor para la clase 'Archivo'.",
+            initialCode: "class Archivo {\npublic:\n    // Tu código\n};",
+                expectedRegex: /~Archivo\s*\(\s*\)/,
+                    solution: "~Archivo() {}"
+    }
+},
+{
+    id: 27,
         title: "9.2: Herencia y Polimorfismo (V-Table)",
-        phase: "Módulo 9: OOP",
-        description: "El costo oculto de las funciones virtuales.",
-        content: `
+            phase: "Módulo 9: OOP",
+                description: "El costo oculto de las funciones virtuales.",
+                    content: `
 # 1. Herencia Pública
 
 \`class Perro : public Animal { ... };\`
@@ -1210,28 +1231,28 @@ Para lograr polimorfismo dinámico (que \`animal->hablar()\` llame a \`Perro::ha
 *   **\`override\`**: Asegura que estás sobrescribiendo una función virtual de la base. Si te equivocas en la firma, da error de compilación.
 *   **\`final\`**: Impide que una clase sea heredada o una función sea sobrescrita. Permite al compilador devirtualizar llamadas (optimización).
     `,
-        quiz: {
-            question: "¿Qué estructura de datos oculta usa C++ para implementar el despacho dinámico de funciones virtuales?",
+                        quiz: {
+        question: "¿Qué estructura de datos oculta usa C++ para implementar el despacho dinámico de funciones virtuales?",
             options: ["Hash Map", "V-Table (Virtual Method Table)", "Linked List", "Binary Tree"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Declara una función virtual pura 'dibujar' en la clase 'Forma'.",
-            initialCode: "class Forma {\npublic:\n    // Tu código\n};",
-            expectedRegex: /virtual\s+void\s+dibujar\s*\(\s*\)\s*=\s*0\s*;/,
-            solution: "virtual void dibujar() = 0;"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Declara una función virtual pura 'dibujar' en la clase 'Forma'.",
+            initialCode: "class Forma {\npublic:\n    // Tu código\n};",
+                expectedRegex: /virtual\s+void\s+dibujar\s*\(\s*\)\s*=\s*0\s*;/,
+                    solution: "virtual void dibujar() = 0;"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 10: TEMPLATES Y METAPROGRAMACIÓN
-    // ===========================================================================
-    {
-        id: 28,
+// ===========================================================================
+// MÓDULO 10: TEMPLATES Y METAPROGRAMACIÓN
+// ===========================================================================
+{
+    id: 28,
         title: "10.1: Templates de Funciones y Clases",
-        phase: "Módulo 10: Templates",
-        description: "Programación genérica: Escribe una vez, usa con cualquier tipo.",
-        content: `
+            phase: "Módulo 10: Templates",
+                description: "Programación genérica: Escribe una vez, usa con cualquier tipo.",
+                    content: `
 # 1. La Idea de los Templates
 
 C++ es un lenguaje fuertemente tipado. Para no escribir \`max(int, int)\`, \`max(float, float)\`, etc., usamos templates.
@@ -1253,24 +1274,24 @@ Si usas \`maximo<int>\`, \`maximo<float>\` y \`maximo<double>\`, el compilador g
 Puedes definir una implementación específica para un tipo concreto.
 \`template <> const char* maximo(const char* a, const char* b) { ... }\`
     `,
-        quiz: {
-            question: "¿Cuándo se genera el código máquina de una función template?",
+                        quiz: {
+        question: "¿Cuándo se genera el código máquina de una función template?",
             options: ["Al escribir el código", "Al compilar la definición del template", "Al instanciar el template (usarlo con un tipo concreto)", "En tiempo de ejecución"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Declara un template de clase 'Caja' que contenga un elemento de tipo T.",
-            initialCode: "",
-            expectedRegex: /template\s*<\s*typename\s+T\s*>\s*class\s+Caja/,
-            solution: "template <typename T> class Caja {};"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 29,
+    codeChallenge: {
+        instruction: "Declara un template de clase 'Caja' que contenga un elemento de tipo T.",
+            initialCode: "",
+                expectedRegex: /template\s*<\s*typename\s+T\s*>\s*class\s+Caja/,
+                    solution: "template <typename T> class Caja {};"
+    }
+},
+{
+    id: 29,
         title: "10.2: Concepts (C++20)",
-        phase: "Módulo 10: Templates",
-        description: "Restringiendo los templates para mensajes de error humanos.",
-        content: `
+            phase: "Módulo 10: Templates",
+                description: "Restringiendo los templates para mensajes de error humanos.",
+                    content: `
 # 1. El Problema de los Templates Antiguos
 
 Si instanciabas un template con un tipo inválido (ej. ordenar un objeto que no tiene operador \`<\`), obtenías 100 líneas de errores crípticos del compilador.
@@ -1295,28 +1316,28 @@ Sintaxis abreviada en C++20:
 \`void funcion(std::integral auto x);\`
 Es equivalente a un template restringido.
     `,
-        quiz: {
-            question: "¿Cuál es el propósito principal de los Concepts en C++20?",
+                        quiz: {
+        question: "¿Cuál es el propósito principal de los Concepts en C++20?",
             options: ["Hacer el código más rápido", "Restringir los tipos de los templates y mejorar los mensajes de error", "Permitir herencia múltiple", "Reducir el tamaño del ejecutable"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Define una función template 'cuadrado' que SOLO acepte tipos de punto flotante (std::floating_point).",
-            initialCode: "#include <concepts>\n",
-            expectedRegex: /requires\s+std::floating_point/,
-            solution: "template<typename T> requires std::floating_point<T> T cuadrado(T x) { return x*x; }"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Define una función template 'cuadrado' que SOLO acepte tipos de punto flotante (std::floating_point).",
+            initialCode: "#include <concepts>\n",
+                expectedRegex: /requires\s+std::floating_point/,
+                    solution: "template<typename T> requires std::floating_point<T> T cuadrado(T x) { return x*x; }"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 11: GESTIÓN DE MEMORIA MODERNA
-    // ===========================================================================
-    {
-        id: 30,
+// ===========================================================================
+// MÓDULO 11: GESTIÓN DE MEMORIA MODERNA
+// ===========================================================================
+{
+    id: 30,
         title: "11.1: Smart Pointers (unique_ptr, shared_ptr)",
-        phase: "Módulo 11: Memoria",
-        description: "El fin de new y delete manuales.",
-        content: `
+            phase: "Módulo 11: Memoria",
+                description: "El fin de new y delete manuales.",
+                    content: `
 # 1. std::unique_ptr
 
 Propiedad exclusiva. No se puede copiar, solo mover.
@@ -1334,24 +1355,24 @@ El objeto se destruye solo cuando el último \`shared_ptr\` muere.
 
 Rompe ciclos de referencias circulares en \`shared_ptr\`. No incrementa el contador.
     `,
-        quiz: {
-            question: "¿Qué smart pointer tiene CERO overhead comparado con un puntero crudo?",
+                        quiz: {
+        question: "¿Qué smart pointer tiene CERO overhead comparado con un puntero crudo?",
             options: ["std::shared_ptr", "std::weak_ptr", "std::unique_ptr", "std::auto_ptr"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Crea un unique_ptr de entero con valor 5 usando make_unique.",
-            initialCode: "#include <memory>\n",
-            expectedRegex: /std::make_unique<\s*int\s*>\s*\(\s*5\s*\)/,
-            solution: "auto p = std::make_unique<int>(5);"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 31,
+    codeChallenge: {
+        instruction: "Crea un unique_ptr de entero con valor 5 usando make_unique.",
+            initialCode: "#include <memory>\n",
+                expectedRegex: /std::make_unique<\s*int\s*>\s*\(\s*5\s*\)/,
+                    solution: "auto p = std::make_unique<int>(5);"
+    }
+},
+{
+    id: 31,
         title: "11.2: Move Semantics (Semántica de Movimiento)",
-        phase: "Módulo 11: Memoria",
-        description: "Optimizando copias innecesarias.",
-        content: `
+            phase: "Módulo 11: Memoria",
+                description: "Optimizando copias innecesarias.",
+                    content: `
 # 1. L-values vs R-values
 
 *   **L-value**: Tiene nombre y dirección (ej. \`int x\`).
@@ -1373,28 +1394,28 @@ Si defines uno de estos, probablemente necesites definir los 5:
 4.  Constructor de Movimiento
 5.  Operador de Asignación de Movimiento
     `,
-        quiz: {
-            question: "¿Qué hace std::move(x)?",
+                        quiz: {
+        question: "¿Qué hace std::move(x)?",
             options: ["Mueve x a otra dirección de memoria", "Convierte x (cast) a una referencia R-value (x&&)", "Borra x", "Copia x"],
-            correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Usa std::move para transferir 's1' a 's2'.",
-            initialCode: "std::string s1 = \"largo\";\nstd::string s2;",
-            expectedRegex: /s2\s*=\s*std::move\s*\(\s*s1\s*\)/,
-            solution: "s2 = std::move(s1);"
-        }
+                correctAnswer: 1
     },
+    codeChallenge: {
+        instruction: "Usa std::move para transferir 's1' a 's2'.",
+            initialCode: "std::string s1 = \"largo\";\nstd::string s2;",
+                expectedRegex: /s2\s*=\s*std::move\s*\(\s*s1\s*\)/,
+                    solution: "s2 = std::move(s1);"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 12: PATRONES DE DISEÑO
-    // ===========================================================================
-    {
-        id: 32,
+// ===========================================================================
+// MÓDULO 12: PATRONES DE DISEÑO
+// ===========================================================================
+{
+    id: 32,
         title: "12.1: Singleton (Meyers Implementation)",
-        phase: "Módulo 12: Patrones",
-        description: "La forma Thread-Safe correcta en C++.",
-        content: `
+            phase: "Módulo 12: Patrones",
+                description: "La forma Thread-Safe correcta en C++.",
+                    content: `
 # El Problema
 Garantizar una única instancia de una clase.
 
@@ -1415,24 +1436,24 @@ private:
 \`\`\`
 Esta es la implementación estándar de oro hoy en día.
     `,
-        quiz: {
-            question: "¿Qué garantiza C++11 sobre la inicialización de variables estáticas locales?",
+                        quiz: {
+        question: "¿Qué garantiza C++11 sobre la inicialización de variables estáticas locales?",
             options: ["Es Thread-Safe", "Es asíncrona", "Es lazy", "No garantiza nada"],
-            correctAnswer: 0
-        },
-        codeChallenge: {
-            instruction: "Borra el operador de asignación para hacer la clase no copiable.",
-            initialCode: "class S {\npublic:\n    // Tu código\n};",
-            expectedRegex: /operator\s*=\s*\(\s*const\s+S&\s*\)\s*=\s*delete/,
-            solution: "void operator=(const S&) = delete;"
-        }
+                correctAnswer: 0
     },
-    {
-        id: 33,
+    codeChallenge: {
+        instruction: "Borra el operador de asignación para hacer la clase no copiable.",
+            initialCode: "class S {\npublic:\n    // Tu código\n};",
+                expectedRegex: /operator\s*=\s*\(\s*const\s+S&\s*\)\s*=\s*delete/,
+                    solution: "void operator=(const S&) = delete;"
+    }
+},
+{
+    id: 33,
         title: "12.2: Factory Pattern",
-        phase: "Módulo 12: Patrones",
-        description: "Desacoplando la creación.",
-        content: `
+            phase: "Módulo 12: Patrones",
+                description: "Desacoplando la creación.",
+                    content: `
 # Factory Method
 En lugar de \`new Perro()\`, usa \`AnimalFactory::crear("perro")\`.
 
@@ -1447,28 +1468,28 @@ std::unique_ptr<Animal> crearAnimal(Tipo t) {
 }
 \`\`\`
     `,
-        quiz: {
-            question: "¿Qué tipo de retorno es ideal para una Factory en C++ moderno?",
+                        quiz: {
+        question: "¿Qué tipo de retorno es ideal para una Factory en C++ moderno?",
             options: ["void*", "Puntero crudo (T*)", "std::unique_ptr<T>", "Referencia (T&)"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Declara una función que retorne un unique_ptr de 'Widget'.",
-            initialCode: "",
-            expectedRegex: /std::unique_ptr<\s*Widget\s*>\s+\w+/,
-            solution: "std::unique_ptr<Widget> crear();"
-        }
+                correctAnswer: 2
     },
+    codeChallenge: {
+        instruction: "Declara una función que retorne un unique_ptr de 'Widget'.",
+            initialCode: "",
+                expectedRegex: /std::unique_ptr<\s*Widget\s*>\s+\w+/,
+                    solution: "std::unique_ptr<Widget> crear();"
+    }
+},
 
-    // ===========================================================================
-    // MÓDULO 13: HERRAMIENTAS PROFESIONALES
-    // ===========================================================================
-    {
-        id: 34,
+// ===========================================================================
+// MÓDULO 13: HERRAMIENTAS PROFESIONALES
+// ===========================================================================
+{
+    id: 34,
         title: "13.1: CMake y Build Systems",
-        phase: "Módulo 13: Tooling",
-        description: "Más allá de g++ main.cpp.",
-        content: `
+            phase: "Módulo 13: Tooling",
+                description: "Más allá de g++ main.cpp.",
+                    content: `
 # CMake
 No compila código. Genera archivos para otros sistemas (Makefiles, Ninja, Visual Studio).
 Es el estándar de la industria.
@@ -1486,24 +1507,24 @@ add_executable(app main.cpp utils.cpp)
 # Targets
 En CMake moderno, pensamos en "Targets" (ejecutables o librerías) y sus propiedades, no en variables globales.
     `,
-        quiz: {
-            question: "¿Qué hace realmente CMake?",
+                        quiz: {
+        question: "¿Qué hace realmente CMake?",
             options: ["Compila el código C++", "Enlaza las librerías", "Genera archivos de construcción para otro sistema (como Make o Ninja)", "Ejecuta el programa"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Escribe el comando CMake para definir el estándar C++ 20.",
-            initialCode: "# CMakeLists.txt\n",
-            expectedRegex: /set\s*\(\s*CMAKE_CXX_STANDARD\s+20\s*\)/,
-            solution: "set(CMAKE_CXX_STANDARD 20)"
-        }
+                correctAnswer: 2
     },
-    {
-        id: 35,
+    codeChallenge: {
+        instruction: "Escribe el comando CMake para definir el estándar C++ 20.",
+            initialCode: "# CMakeLists.txt\n",
+                expectedRegex: /set\s*\(\s*CMAKE_CXX_STANDARD\s+20\s*\)/,
+                    solution: "set(CMAKE_CXX_STANDARD 20)"
+    }
+},
+{
+    id: 35,
         title: "13.2: Sanitizers (ASan, TSan)",
-        phase: "Módulo 13: Tooling",
-        description: "Detectores de bugs en tiempo de ejecución.",
-        content: `
+            phase: "Módulo 13: Tooling",
+                description: "Detectores de bugs en tiempo de ejecución.",
+                    content: `
 # Address Sanitizer (ASan)
 Detecta:
 *   Buffer Overflows (leer fuera del array).
@@ -1519,16 +1540,16 @@ Uso: \`g++ -fsanitize=thread -g ...\`
 
 > **Nota**: TSan ralentiza el programa ~10x. Úsalo en tests, no en producción.
     `,
-        quiz: {
-            question: "¿Qué flag de compilador activa Address Sanitizer?",
+                        quiz: {
+        question: "¿Qué flag de compilador activa Address Sanitizer?",
             options: ["-Wall", "-O3", "-fsanitize=address", "-fcheck-memory"],
-            correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Escribe el flag para activar Thread Sanitizer.",
+                correctAnswer: 2
+    },
+    codeChallenge: {
+        instruction: "Escribe el flag para activar Thread Sanitizer.",
             initialCode: "",
-            expectedRegex: /-fsanitize=thread/,
-            solution: "-fsanitize=thread"
-        }
+                expectedRegex: /-fsanitize=thread/,
+                    solution: "-fsanitize=thread"
     }
+}
 ];
