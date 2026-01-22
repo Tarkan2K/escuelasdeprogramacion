@@ -60,12 +60,6 @@ Nos adheriremos estrictamente a las prácticas modernas, evitando construcciones
             question: "¿Qué significa el principio de 'Abstracción de Costo Cero'?",
             options: ["Las abstracciones no consumen memoria", "El uso de abstracciones de alto nivel no impone una penalización de rendimiento en tiempo de ejecución comparado con código manual de bajo nivel", "El compilador elimina todas las abstracciones", "No se debe pagar por usar el compilador"],
             correctAnswer: 1
-        },
-        codeChallenge: {
-            instruction: "Escribe el comentario '// C++20' para confirmar que entiendes el estándar objetivo.",
-            initialCode: "// \n",
-            expectedRegex: /\/\/\s*C\+\+20/,
-            solution: "// C++20"
         }
     },
     {
@@ -115,12 +109,6 @@ Por ejemplo, \`void foo(int)\` podría convertirse en \`_Z3fooi\`. Esto es espec
             question: "Si obtienes un error 'Undefined reference to function X', ¿en qué etapa falló el proceso?",
             options: ["Preprocesamiento", "Compilación", "Enlazado (Linking)", "Ejecución"],
             correctAnswer: 2
-        },
-        codeChallenge: {
-            instruction: "Escribe '// Linker' para identificar la herramienta responsable de unir los objetos.",
-            initialCode: "// \n",
-            expectedRegex: /\/\/\s*Linker/i,
-            solution: "// Linker"
         }
     },
 

@@ -154,7 +154,7 @@ function CppCourse() {
 
 function LessonView({ lesson, onComplete, isCompleted }) {
     const [quizSelected, setQuizSelected] = useState(null);
-    const [code, setCode] = useState(lesson.codeChallenge.initialCode);
+    const [code, setCode] = useState(lesson.codeChallenge?.initialCode || '');
     const [feedback, setFeedback] = useState(null);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showSolution, setShowSolution] = useState(false);
@@ -162,7 +162,7 @@ function LessonView({ lesson, onComplete, isCompleted }) {
     // Reset state when lesson changes
     useEffect(() => {
         setQuizSelected(null);
-        setCode(lesson.codeChallenge.initialCode);
+        setCode(lesson.codeChallenge?.initialCode || '');
         setFeedback(null);
         setShowSuccess(false);
         setShowSolution(false);
@@ -179,11 +179,17 @@ function LessonView({ lesson, onComplete, isCompleted }) {
     const handleQuizSubmit = (index) => {
         setQuizSelected(index);
         if (index === lesson.quiz.correctAnswer) {
-            // Correct
+            // If there is no code challenge, completing the quiz completes the lesson
+            if (!lesson.codeChallenge) {
+                setShowSuccess(true);
+                onComplete();
+            }
         }
     };
 
     const runCode = () => {
+        if (!lesson.codeChallenge) return;
+
         if (lesson.codeChallenge.expectedRegex.test(code)) {
             setFeedback({ type: 'success', msg: '¡Código Correcto! Has dominado este concepto.' });
             setShowSuccess(true);
@@ -254,54 +260,56 @@ function LessonView({ lesson, onComplete, isCompleted }) {
                     </div>
                 </div>
 
-                {/* Code Challenge */}
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 backdrop-blur-sm flex flex-col">
-                    <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <Code className="text-blue-400" size={20} />
-                        Desafío de Código
-                    </h3>
-                    <p className="text-sm text-gray-400 mb-4">{lesson.codeChallenge.instruction}</p>
+                {/* Code Challenge - Only show if exists */}
+                {lesson.codeChallenge && (
+                    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700 backdrop-blur-sm flex flex-col">
+                        <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <Code className="text-blue-400" size={20} />
+                            Desafío de Código
+                        </h3>
+                        <p className="text-sm text-gray-400 mb-4">{lesson.codeChallenge.instruction}</p>
 
-                    <div className="flex-1 relative group mb-4">
-                        <textarea
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                            className="w-full h-48 bg-[#1e1e1e] text-gray-300 font-mono text-sm p-4 rounded-lg border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
-                            spellCheck="false"
-                        />
-                    </div>
-
-                    <div className="flex gap-3">
-                        <button
-                            onClick={runCode}
-                            className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-blue-900/30"
-                        >
-                            Ejecutar Código
-                        </button>
-                        <button
-                            onClick={() => setShowSolution(!showSolution)}
-                            className="px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
-                        >
-                            {showSolution ? 'Ocultar' : 'Ver Solución'}
-                        </button>
-                    </div>
-
-                    {feedback && (
-                        <div className={`mt-4 p-3 rounded-lg text-sm ${feedback.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
-                            {feedback.msg}
+                        <div className="flex-1 relative group mb-4">
+                            <textarea
+                                value={code}
+                                onChange={(e) => setCode(e.target.value)}
+                                className="w-full h-48 bg-[#1e1e1e] text-gray-300 font-mono text-sm p-4 rounded-lg border border-gray-700 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
+                                spellCheck="false"
+                            />
                         </div>
-                    )}
 
-                    {/* Solution Box */}
-                    {showSolution && lesson.codeChallenge.solution && (
-                        <div className="mt-6 p-4 bg-gray-900/80 rounded-lg border border-gray-600 animate-in fade-in slide-in-from-top-2">
-                            <p className="text-xs text-gray-400 uppercase font-bold mb-2">Solución Correcta:</p>
-                            <pre className="text-sm text-green-300 font-mono overflow-x-auto">
-                                <code>{lesson.codeChallenge.solution}</code>
-                            </pre>
+                        <div className="flex gap-3">
+                            <button
+                                onClick={runCode}
+                                className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-blue-900/30"
+                            >
+                                Ejecutar Código
+                            </button>
+                            <button
+                                onClick={() => setShowSolution(!showSolution)}
+                                className="px-4 bg-gray-700 hover:bg-gray-600 text-gray-300 font-semibold rounded-lg transition-colors"
+                            >
+                                {showSolution ? 'Ocultar' : 'Ver Solución'}
+                            </button>
                         </div>
-                    )}
-                </div>
+
+                        {feedback && (
+                            <div className={`mt-4 p-3 rounded-lg text-sm ${feedback.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+                                {feedback.msg}
+                            </div>
+                        )}
+
+                        {/* Solution Box */}
+                        {showSolution && lesson.codeChallenge.solution && (
+                            <div className="mt-6 p-4 bg-gray-900/80 rounded-lg border border-gray-600 animate-in fade-in slide-in-from-top-2">
+                                <p className="text-xs text-gray-400 uppercase font-bold mb-2">Solución Correcta:</p>
+                                <pre className="text-sm text-green-300 font-mono overflow-x-auto">
+                                    <code>{lesson.codeChallenge.solution}</code>
+                                </pre>
+                            </div>
+                        )}
+                    </div>
+                )}
             </div>
 
             {showSuccess && (
