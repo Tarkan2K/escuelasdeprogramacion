@@ -8,31 +8,53 @@ export const lessons = [
         phase: "Módulo 0: Introducción",
         description: "Historia, filosofía de diseño, estandarización ISO y el modelo de abstracción de costo cero.",
         content: `
-# 1. Definición y Filosofía
+# 1. La Filosofía de C++
+C++ es un lenguaje de programación de propósito general creado por Bjarne Stroustrup como una extensión del lenguaje C, o "C with Classes". Está diseñado con un sesgo hacia la programación de sistemas y software embebido o con recursos limitados, destacando por su rendimiento, eficiencia y flexibilidad.
 
-C++ es un lenguaje de programación de propósito general, compilado, estáticamente tipado y multiparadigma. Fue desarrollado inicialmente por Bjarne Stroustrup en los Bell Labs en 1979 como una extensión del lenguaje C, originalmente llamado "C with Classes".
+La filosofía central de C++ moderno se resume en las **C++ Core Guidelines**:
+1.  **Expresar ideas directamente en código**: El lenguaje debe permitirte declarar *qué* quieres hacer, no solo *cómo* hacerlo.
+2.  **Abstracción de Costo Cero (Zero-overhead abstraction)**: No debes pagar por características que no usas. Las abstracciones de alto nivel deben ser tan eficientes como el código de bajo nivel escrito a mano.
+3.  **Seguridad de Tipos Estática**: Idealmente, el compilador debe atrapar los errores antes de que el programa se ejecute.
 
-La filosofía central de C++ se resume en dos principios fundamentales:
+> "C++ está diseñado para permitirte expresar ideas de forma directa y concisa." - Bjarne Stroustrup
 
-1.  **Abstracción de Costo Cero (Zero Overhead Abstraction)**: "Lo que no usas, no lo pagas (en rendimiento). Y lo que usas, no podrías escribirlo mejor a mano en ensamblador". C++ permite construir abstracciones de alto nivel (como clases y templates) que se compilan a instrucciones de máquina tan eficientes como el código de bajo nivel.
-2.  **Control Directo del Hardware**: C++ proporciona mecanismos para manipular directamente la memoria (punteros) y gestionar recursos del sistema, lo que lo hace indispensable para sistemas operativos, motores de juegos y sistemas de alta frecuencia (HFT).
+# 2. El Proceso de Compilación
+A diferencia de lenguajes interpretados (como Python o JavaScript), C++ es un **lenguaje compilado**. Esto significa que tu código fuente legible por humanos debe ser traducido a código máquina que el procesador pueda ejecutar. Este proceso ocurre en tres etapas principales:
 
-# 2. Estandarización ISO
+1.  **Preprocesamiento**: El preprocesador maneja directivas que comienzan con \`#\` (como \`#include\`). Esencialmente copia y pega texto, preparando el archivo fuente para el compilador.
+2.  **Compilación**: El compilador traduce el código C++ preprocesado a una forma intermedia llamada **código objeto** (\`.o\` o \`.obj\`). Aquí es donde se detectan los errores de sintaxis.
+3.  **Enlazado (Linking)**: El enlazador toma todos los archivos objeto y librerías y los combina en un único binario **ejecutable**. Resuelve las referencias entre diferentes partes de tu programa.
 
-C++ no pertenece a ninguna compañía; es un estándar internacional gestionado por el comité ISO/IEC JTC1/SC22/WG21.
+# 3. Anatomía de un Programa en C++
+Todo programa en C++ debe tener exactamente un punto de entrada: la función \`main\`.
 
-*   **C++98/03**: La primera estandarización oficial. Estableció la base del lenguaje y la STL (Standard Template Library).
-*   **C++11**: Un cambio paradigmático masivo. Introdujo semántica de movimiento (move semantics), punteros inteligentes (smart pointers), lambdas, concurrencia nativa y la palabra clave \`auto\`. Se considera el nacimiento de "C++ Moderno".
-*   **C++14**: Mejoras incrementales y correcciones sobre C++11.
-*   **C++17**: Introdujo \`std::string_view\`, \`std::optional\`, \`std::variant\`, y \`constexpr\` if.
-*   **C++20**: La mayor actualización desde C++11. Introdujo Módulos, Corrutinas, Conceptos y Rangos.
-*   **C++23**: Mejoras en la librería estándar y facilidades para la programación asíncrona.
+\`\`\`cpp
+#include <iostream> // Directiva de preprocesador
 
-> **Nota**: Este curso se adhiere estrictamente a las prácticas de **C++20**, ya que representan el estado del arte en el desarrollo de software profesional.
+// El punto de entrada del programa
+int main() {
+    // Flujo de Salida Estándar
+    std::cout << "Hola, Mundo!" << std::endl; 
+    
+    return 0; // Estado de retorno al sistema operativo
+}
+\`\`\`
 
-# 3. El Proceso de Desarrollo
+### Componentes Clave:
+*   \`#include <iostream>\`: Le dice al preprocesador que incluya la librería de Flujo de Entrada/Salida Estándar. Nos permite imprimir texto en la consola.
+*   \`int main()\`: Define la función principal. Retorna un entero (\`int\`) que representa el estado de salida del programa.
+*   \`std::cout\`: Representa la "Salida de Caracteres Estándar". Vive dentro del espacio de nombres \`std\` (estándar).
+*   \`<<\`: El operador de inserción. "Inserta" los datos de la derecha en el flujo de la izquierda.
+*   \`return 0;\`: Un valor de retorno de \`0\` tradicionalmente significa "Éxito". Cualquier valor distinto de cero indica un error.
 
-El desarrollo en C++ implica un ciclo de edición, compilación, enlazado y depuración. A diferencia de lenguajes interpretados como Python o JavaScript, el código fuente de C++ debe transformarse en código máquina específico para la arquitectura del procesador (x86, ARM) y el sistema operativo (Linux, Windows) antes de poder ejecutarse.
+# 4. Estándares de C++ Moderno
+C++ ha evolucionado significativamente. Este curso se centra en **C++ Moderno** (C++11, C++14, C++17, C++20 y C++23).
+*   **C++98/03**: La era "Legada".
+*   **C++11**: La revolución "Moderna". Añadió \`auto\`, punteros inteligentes, lambdas.
+*   **C++14/17**: Refinamientos y nuevas características de la librería estándar.
+*   **C++20**: Un gran salto adelante. Añadió Conceptos, Módulos, Corrutinas y Rangos.
+
+Nos adheriremos estrictamente a las prácticas modernas, evitando construcciones obsoletas estilo C donde existan alternativas más seguras en C++.
     `,
         quiz: {
             question: "¿Qué significa el principio de 'Abstracción de Costo Cero'?",
