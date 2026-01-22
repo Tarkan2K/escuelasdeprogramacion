@@ -152,6 +152,9 @@ function CppCourse() {
     );
 }
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 function LessonView({ lesson, onComplete, isCompleted }) {
     const [quizSelected, setQuizSelected] = useState(null);
     const [code, setCode] = useState(lesson.codeChallenge?.initialCode || '');
@@ -200,37 +203,23 @@ function LessonView({ lesson, onComplete, isCompleted }) {
     };
 
     return (
-        <div className="space-y-10 pb-20">
+        <div className="space-y-8 pb-20">
             {/* Header */}
-            <div className="space-y-4 border-b border-gray-800 pb-8">
-                <div className="flex items-center gap-2 text-blue-400 text-sm font-medium uppercase tracking-wider">
+            <div className="border-b border-gray-800 pb-6">
+                <div className="flex items-center gap-2 text-purple-400 mb-2 text-sm font-medium tracking-wider uppercase">
                     <Terminal size={16} />
                     {lesson.phase}
                 </div>
-                <h1 className="text-4xl font-bold text-white">{lesson.title}</h1>
+                <h1 className="text-4xl font-bold text-white mb-4">{lesson.title}</h1>
                 <p className="text-xl text-gray-400 leading-relaxed">{lesson.description}</p>
             </div>
 
-            {/* Theory Content */}
-            <div className="prose prose-invert prose-lg max-w-none">
-                <div dangerouslySetInnerHTML={{
-                    __html: lesson.content
-                        .replace(/# (.*)/g, '<h2 class="text-2xl font-bold text-white mt-8 mb-4">$1</h2>')
-                        .replace(/## (.*)/g, '<h3 class="text-xl font-semibold text-blue-300 mt-6 mb-3">$1</h3>')
-                        .replace(/```cpp([\s\S]*?)```/g, '<pre class="rounded-lg bg-[#1e1e1e] p-4 border border-gray-700 overflow-x-auto"><code class="language-cpp">$1</code></pre>')
-                        .replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-200">$1</strong>')
-                        .replace(/`([^`]+)`/g, '<code class="bg-gray-800 px-1.5 py-0.5 rounded text-blue-300 text-sm font-mono">$1</code>')
-                        .replace(/\| (.*) \|/g, (match) => {
-                            // Simple table row formatter
-                            if (match.includes('---')) return ''; // Skip separator lines
-                            const cells = match.split('|').filter(c => c.trim());
-                            return `<div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 border-b border-gray-700 py-3">
-                  <div class="font-bold text-blue-300">${cells[0]}</div>
-                  <div class="text-gray-300">${cells[1]}</div>
-                </div>`;
-                        })
-                }} />
+            <div className="prose prose-invert prose-lg max-w-none prose-headings:text-purple-300 prose-a:text-blue-400 prose-code:text-purple-300 prose-pre:bg-[#1a1a1a] prose-pre:border prose-pre:border-gray-800">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {lesson.content}
+                </ReactMarkdown>
             </div>
+
 
             {/* Interactive Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
@@ -312,16 +301,18 @@ function LessonView({ lesson, onComplete, isCompleted }) {
                 )}
             </div>
 
-            {showSuccess && (
-                <div className="fixed bottom-8 right-8 bg-green-600 text-white px-6 py-4 rounded-lg shadow-2xl animate-bounce flex items-center gap-3">
-                    <CheckCircle size={24} />
-                    <div>
-                        <p className="font-bold">¡Lección Completada!</p>
-                        <p className="text-sm text-green-100">Continúa con la siguiente.</p>
+            {
+                showSuccess && (
+                    <div className="fixed bottom-8 right-8 bg-green-600 text-white px-6 py-4 rounded-lg shadow-2xl animate-bounce flex items-center gap-3">
+                        <CheckCircle size={24} />
+                        <div>
+                            <p className="font-bold">¡Lección Completada!</p>
+                            <p className="text-sm text-green-100">Continúa con la siguiente.</p>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }
 
