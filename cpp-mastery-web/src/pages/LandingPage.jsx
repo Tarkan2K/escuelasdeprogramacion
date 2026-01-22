@@ -25,21 +25,21 @@ const LandingPage = () => {
             glow: 'shadow-none'
         },
         {
-            id: 'js',
-            name: 'Fullstack JS',
-            icon: <Globe size={48} />,
-            description: 'Desarrollo web moderno con React y Node.',
-            status: 'locked',
-            color: 'from-yellow-300 to-yellow-500',
-            glow: 'shadow-none'
-        },
-        {
             id: 'rust',
             name: 'Rust Systems',
             icon: <Code2 size={48} />,
             description: 'Seguridad de memoria y concurrencia sin miedo.',
             status: 'locked',
             color: 'from-orange-700 to-red-600',
+            glow: 'shadow-none'
+        },
+        {
+            id: 'js',
+            name: 'Fullstack JS',
+            icon: <Globe size={48} />,
+            description: 'Desarrollo web moderno con React y Node.',
+            status: 'locked',
+            color: 'from-yellow-300 to-yellow-500',
             glow: 'shadow-none'
         }
     ];
@@ -63,13 +63,11 @@ const LandingPage = () => {
                     </span>
                 </div>
                 <div className="flex gap-6 text-sm font-medium text-gray-400">
-                    <button className="hover:text-white transition-colors">Cursos</button>
-                    <button className="hover:text-white transition-colors">Comunidad</button>
-                    <button className="hover:text-white transition-colors">Recursos</button>
+                    <button onClick={() => navigate('/')} className="hover:text-white transition-colors">Cursos</button>
+                    <button onClick={() => navigate('/community')} className="hover:text-white transition-colors">Comunidad</button>
+                    <button onClick={() => navigate('/resources')} className="hover:text-white transition-colors">Recursos</button>
                 </div>
-                <button className="px-4 py-2 text-sm font-medium bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all">
-                    Conectar Wallet
-                </button>
+                {/* Wallet button removed */}
             </nav>
 
             {/* Hero Section */}
@@ -81,17 +79,16 @@ const LandingPage = () => {
 
                 <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight mb-6">
                     <span className="bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-gray-500">
-                        Domina el Código.
+                        Conocimiento del mundo
                     </span>
                     <br />
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-gradient-x">
-                        Construye el Futuro.
+                        para el mundo.
                     </span>
                 </h1>
 
                 <p className="max-w-2xl text-lg text-gray-400 mb-12 leading-relaxed">
-                    Una experiencia de aprendizaje premium diseñada para ingenieros de software serios.
-                    Sin relleno, solo contenido técnico profundo y proyectos reales.
+                    para todos
                 </p>
 
                 {/* Language Grid */}
