@@ -586,6 +586,83 @@ C++ tiene una tabla de precedencia compleja.
         }
     },
     {
+        id: 4,
+        title: "1.2: Variables y Tipos Fundamentales",
+        phase: "Módulo 1: Fundamentos",
+        description: "El sistema de tipos de C++, inicialización uniforme y tipos aritméticos.",
+        content: `
+# Variables y Tipos
+
+C++ es un lenguaje de **tipado estático y fuerte**.
+*   **Estático**: Los tipos se verifican en tiempo de compilación. Una vez declarada una variable como \`int\`, no puede cambiar a \`string\`.
+*   **Fuerte**: El compilador no permite operaciones absurdas entre tipos incompatibles sin una conversión explícita (cast).
+
+## 1. Inicialización
+En C++ moderno, la regla de oro es: **Inicializa siempre tus variables**. Una variable no inicializada tiene un valor basura indeterminado.
+
+### Formas de Inicialización
+\`\`\`cpp
+int a = 5;      // Asignación (Copy Initialization) - Herencia de C
+int b(5);       // Constructor (Direct Initialization)
+int c{5};       // Uniforme (List Initialization) - ¡RECOMENDADO!
+int d{};        // Inicialización por defecto (Zero Initialization) -> d es 0
+\`\`\`
+
+> **Best Practice**: Usa siempre **List Initialization** (\`{}\`).
+> *   Es consistente para todos los tipos.
+> *   Previene el *Narrowing Conversion* (pérdida de datos). \`int x{3.5};\` dará error de compilación, mientras que \`int x = 3.5;\` truncará silenciosamente a 3.
+
+## 2. Tipos Fundamentales
+C++ ofrece un conjunto de tipos primitivos mapeados directamente al hardware.
+
+*   **Enteros**:
+    *   \`int\`: Al menos 16 bits, usualmente 32 bits. Rango: -2,147,483,648 a +2,147,483,647.
+    *   \`long long\`: Al menos 64 bits. Para números astronómicos.
+*   **Punto Flotante**:
+    *   \`double\`: Precisión doble (64 bits). **Usa este por defecto**.
+    *   \`float\`: Precisión simple (32 bits). Úsalo solo si la memoria es crítica.
+*   **Texto**:
+    *   \`char\`: Un solo byte (ASCII). \`char c = 'A';\`
+*   **Lógicos**:
+    *   \`bool\`: \`true\` o \`false\`.
+
+## 3. Deducción de Tipos (\`auto\`)
+Desde C++11, el compilador puede deducir el tipo de una variable por su inicializador.
+
+\`\`\`cpp
+auto vida = 100;      // vida es int
+auto nombre = "Alex"; // nombre es const char*
+auto pi = 3.14159;    // pi es double
+\`\`\`
+
+**¿Cuándo usar \`auto\`?**
+*   Siempre que el tipo sea obvio (ej: \`auto i = 0;\`).
+*   Cuando el tipo es muy complejo de escribir (iteradores, lambdas).
+*   **No** lo uses si oscurece la intención del código.
+
+## 4. Inmutabilidad (\`const\`)
+Si una variable no debe cambiar, márcala como \`const\`.
+
+\`\`\`cpp
+const double GRAVEDAD = 9.81;
+GRAVEDAD = 10.0; // ¡Error de compilación!
+\`\`\`
+
+> **Consejo**: Haz todo \`const\` por defecto. Solo quítalo si *realmente* necesitas modificar el valor.
+        `,
+        quiz: {
+            question: "¿Qué sucede si intentas compilar 'int x{3.5};'?",
+            options: ["Se compila y x vale 3", "Se compila y x vale 3.5", "Error de compilación (Narrowing Conversion)", "Advertencia (Warning)"],
+            correctAnswer: 2
+        },
+        codeChallenge: {
+            instruction: "Declara una constante llamada 'PI' con valor 3.14159 usando 'double' y la sintaxis de inicialización uniforme.",
+            initialCode: "// Tu código aquí\n",
+            expectedRegex: /const\s+double\s+PI\s*\{\s*3\.14159\s*\}\s*;/,
+            solution: "const double PI{3.14159};"
+        }
+    },
+    {
         id: 13,
         title: "3.2: Incremento y Efectos Secundarios",
         phase: "Módulo 3: Operadores",

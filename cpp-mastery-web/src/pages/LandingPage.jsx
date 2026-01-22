@@ -8,7 +8,7 @@ const LandingPage = () => {
     const languages = [
         {
             id: 'cpp',
-            name: 'C++ Mastery',
+            name: 'C++',
             icon: <Terminal size={48} />,
             description: 'Domina el lenguaje de alto rendimiento por excelencia.',
             status: 'active',
@@ -17,7 +17,7 @@ const LandingPage = () => {
         },
         {
             id: 'python',
-            name: 'Python AI',
+            name: 'Python',
             icon: <Cpu size={48} />,
             description: 'Inteligencia Artificial y Data Science.',
             status: 'locked',
@@ -26,7 +26,7 @@ const LandingPage = () => {
         },
         {
             id: 'rust',
-            name: 'Rust Systems',
+            name: 'Rust',
             icon: <Code2 size={48} />,
             description: 'Seguridad de memoria y concurrencia sin miedo.',
             status: 'locked',
@@ -35,7 +35,7 @@ const LandingPage = () => {
         },
         {
             id: 'js',
-            name: 'Fullstack JS',
+            name: 'JavaScript',
             icon: <Globe size={48} />,
             description: 'Desarrollo web moderno con React y Node.',
             status: 'locked',
@@ -67,7 +67,6 @@ const LandingPage = () => {
                     <button onClick={() => navigate('/community')} className="hover:text-white transition-colors">Comunidad</button>
                     <button onClick={() => navigate('/resources')} className="hover:text-white transition-colors">Recursos</button>
                 </div>
-                {/* Wallet button removed */}
             </nav>
 
             {/* Hero Section */}
@@ -83,12 +82,12 @@ const LandingPage = () => {
                     </span>
                     <br />
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 animate-gradient-x">
-                        para el mundo.
+                        para el mundo
                     </span>
                 </h1>
 
                 <p className="max-w-2xl text-lg text-gray-400 mb-12 leading-relaxed">
-                    para todos
+
                 </p>
 
                 {/* Language Grid */}
