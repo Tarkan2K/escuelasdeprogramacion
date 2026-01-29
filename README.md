@@ -77,7 +77,7 @@ cd cpp-mastery-web
 3. Install dependencies
 npm install
 
-3. Start the development server
+4. Start the development server
 npm run dev
 
 Future Roadmap
