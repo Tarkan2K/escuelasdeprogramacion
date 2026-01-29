@@ -65,7 +65,11 @@ To run this project locally for development or contribution:
 git clone [https://github.com/Tarkan2K/escuelasdeprogramacion.git](https://github.com/Tarkan2K/escuelasdeprogramacion.git)
 cd escuelasdeprogramacion
 
-2. Install dependencies
+2. Navigate to the source code directory (Critical Step: The frontend logic resides in the cpp-mastery-web folder)
+
+cd cpp-mastery-web
+
+3. Install dependencies
 npm install
 
 3. Start the development server
