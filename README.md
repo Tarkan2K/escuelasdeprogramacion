@@ -23,8 +23,13 @@ The project is engineered for scalability, with a modular architecture ready to 
 
 ## Key Features
 
-### 1. Comprehensive C++ Curriculum
-The pilot module offers a structured learning path divided into progressive chapters. Each section is backed by detailed documentation and practical examples, covering concepts from syntax fundamentals to memory management.
+### 1. Advanced Systems Curriculum (C++)
+The pilot module offers a structured learning path focused on Systems Programming. Unlike standard tutorials, it includes specific case studies on **Memory Management**, **Small String Optimization (SSO)**, and RAII patterns, backed by detailed documentation and code analysis.
+
+**Sample Challenges:**
+* **SSO Implementation:** Recreating the `std::string` internal buffer optimization logic using Unions and memory layout techniques.
+* **Smart Pointer Architecture:** Implementing a custom `SharedPtr` with reference counting and Move Semantics (Rule of Five).
+* **Concurrency Patterns:** Building a Thread-Safe Producer-Consumer Queue utilizing `std::mutex`, `std::condition_variable`, and protection against spurious wakeups.
 
 ### 2. Tiered Assessment Engine
 A robust testing system designed to validate knowledge retention through standardized exams:
